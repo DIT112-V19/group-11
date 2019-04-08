@@ -33,7 +33,7 @@ int fDistance = 0;
 void loop() {
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
-  if(fDistance >= 30 && fDistance != 0){ // not 0 to account for faulty readings
+  if(fDistance >= 30 || fDistance == 0){
     goForward();
     } else{
       stop();
