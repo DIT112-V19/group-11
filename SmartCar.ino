@@ -29,8 +29,15 @@ void setup() {
   }
 
 int fDistance = 0;
+int rDistance = 0;
+const unsigned long DISTANCE_PRINT_INTERVAL = 1000; // one second
+unsigned long distancePrintToggle = 0;
+
+
+unsigned long currentTime = 0;
 
 void loop() {
+  currentTime = millis();
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
   if(fDistance >= 30 || fDistance == 0){
@@ -38,7 +45,32 @@ void loop() {
     } else{
       stop();
       }
-  Serial.println(rSensor.getDistance());
+
+  if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
+    distancePrintToggle = currentTime;
+    printDistance();
+    }
+}
+
+boolean intervalCheck(unsigned long interval, unsigned long toggle){ // handles interval checking for a given interval and the respective toggle
+  if(currentTime > distancePrintToggle + interval){
+    return true;
+    } else{
+      return false;
+      }
+  }
+
+void printDistance(){
+  if(fDistance == 0){
+    Serial.println("No Object Found In Front");
+    } else{
+      Serial.println("Front Distance: " + fDistance);
+      }
+  if(rDistance == 0){
+    Serial.println("No Object Found Behind");
+  } else{
+    Serial.println("Rear Distance" + rDistance);
+    }
 }
 
 void stop() {
