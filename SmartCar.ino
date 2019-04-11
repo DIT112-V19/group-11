@@ -2,8 +2,8 @@
 
 const unsigned short LEFT_ODOMETER_PIN = 2;
 const unsigned short RIGHT_ODOMETER_PIN = 3;
-const unsigned long PRINT_INTERVAL = 100;
-unsigned long previousPrintout = 0;
+unsigned long beepInterval = 10;
+unsigned long prevBeep = 0;
 
 BrushedMotor leftMotor(8, 10, 9);
 BrushedMotor rightMotor(12, 13, 11);
@@ -40,11 +40,15 @@ void loop() {
   currentTime = millis();
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
-  if(fDistance >= 30 || fDistance == 0){
+/*  if(fDistance >= 30 || fDistance == 0){
     goForward();
     } else{
       stop();
-      }
+      }*/
+
+  if(beep()){
+    prevBeep = currentTime;
+    }
 
   if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
     distancePrintToggle = currentTime;
@@ -58,6 +62,18 @@ boolean intervalCheck(unsigned long interval, unsigned long toggle){ // handles 
     } else{
       return false;
       }
+  }
+
+boolean beep(){
+  if(rDistance <= 50 && rDistance != 0){
+    beepInterval = rDistance * 20;
+    
+    if(currentTime > prevBeep + beepInterval){
+      Serial.println("Beep"); // stand-in for actual audible beep
+      return true;
+      }
+    }
+    return false;
   }
 
 void printDistance(){
