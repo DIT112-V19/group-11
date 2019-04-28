@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/enable_bt"
+        android:text="Enable"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/visible_bt"
+        android:text="Visible"
+        android:layout_alignParentRight="true"
+
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SmartCar"
+        android:layout_centerHorizontal="true"
+        android:textStyle="bold"
+        android:id="@+id/name_bt"
+        android:textSize="20sp"/>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_search"
+        android:padding="5dp"
+        android:id="@+id/search_bt"
+        android:layout_below="@+id/name_bt"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:background="#000000"/>
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/list_view"
+        android:layout_below="@+id/search_bt"
+
+    />
+
+</RelativeLayout>
