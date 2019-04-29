@@ -1,4 +1,6 @@
 #include <Smartcar.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
 
 const unsigned short LEFT_ODOMETER_PIN = 2;
 const unsigned short RIGHT_ODOMETER_PIN = 3;
@@ -17,11 +19,14 @@ int fTrigPin = 35; // pins for rear and front sensors
 int fEchoPin = 39;
 int rTrigPin = 7;
 int rEchoPin = 6;
+int distance = 0;
+int speed = 0;
 
 SR04 fSensor(fTrigPin, fEchoPin, 200);
-SR04 rSensor(rTrigPin, rEchoPin, 100); // unused rear sensor
+SR04 rSensor(rTrigPin, rEchoPin, 100);
 
 SmartCar car(control, gyroscope, leftOdometer, rightOdometer);
+SoftwareSerial BTSerial(0, 1); 
 
 void setup() {
   Serial.begin(9600);
@@ -47,13 +52,13 @@ void loop() {
   currentTime = millis();
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
-  if(fDistance >= 30 || fDistance == 0){
-    goForward();
-    } else{
-      stop();
-      }
+  if(fDistance < 30 && fDistance != 0){
+    stop();
+    }
 
-  if(beep()){
+  handleInput();
+
+  /*if(beep()){
     prevBeep = currentTime;
     }
 
@@ -61,7 +66,7 @@ void loop() {
     distancePrintToggle = currentTime;
     printDistance();
     printSpeed();
-    }
+    }*/
 }
 
 void printSpeed(){
@@ -113,3 +118,59 @@ void stop() {
 void goForward(){
   car.setSpeed(30);
   }
+
+void handleInput(){
+  while (Serial.available()>0){
+    char inChar = Serial.read();
+    switch (inChar) {
+    case 'w': //rotate counter-clockwise
+    setForward();
+    break;
+    case 's': //rotate clock-wise
+      setBackwards();
+      break;
+    case 'a': //go forward
+      setLeft();
+      break;
+    case 'd': //go backward
+      setRight();
+      break;
+    case 'o': //turn back left
+      upSpeed(&speed); 
+        car.setSpeed(speed);
+      break;
+    case 'k': //turn back right
+      downSpeed(&speed);
+              car.setSpeed(speed);
+
+      break;
+      case 'l':
+      car.setSpeed(0); break;
+    default: //if you receive something that you don't know, just stop
+    break;
+    }
+  }
+}
+
+void upSpeed(int *speed2) {
+ *speed2 = 20+ *speed2;
+
+}
+void downSpeed(int *speed2) {
+  *speed2 = -20 + *speed2 ;
+
+}
+
+void setForward()
+{
+  car.setAngle(0);
+}
+void setBackwards() {
+
+}
+void setLeft() {
+  car.setAngle(-90);
+}
+void setRight() {
+  car.setAngle(90);
+}
