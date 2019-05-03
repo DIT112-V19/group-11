@@ -17,9 +17,11 @@ int fTrigPin = 35; // pins for rear and front sensors
 int fEchoPin = 39;
 int rTrigPin = 7;
 int rEchoPin = 6;
+int distance = 0;
+int speed = 0;
 
 SR04 fSensor(fTrigPin, fEchoPin, 200);
-SR04 rSensor(rTrigPin, rEchoPin, 100); // unused rear sensor
+SR04 rSensor(rTrigPin, rEchoPin, 100);
 
 SmartCar car(control, gyroscope, leftOdometer, rightOdometer);
 
@@ -40,20 +42,22 @@ int rDistance = 0;
 const unsigned long DISTANCE_PRINT_INTERVAL = 1000; // one second
 unsigned long distancePrintToggle = 0;
 
-
 unsigned long currentTime = 0;
 
 void loop() {
   currentTime = millis();
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
-  if(fDistance >= 30 || fDistance == 0){
-    goForward();
-    } else{
+  Serial.println(fDistance);
+  if(fDistance < 15 && fDistance != 0){
       stop();
       }
+ /* if(rDistance < 10 && rDistance != 0){
+      stop();
+      }*/
+  handleInput();
 
-  if(beep()){
+  /*if(beep()){
     prevBeep = currentTime;
     }
 
@@ -61,7 +65,7 @@ void loop() {
     distancePrintToggle = currentTime;
     printDistance();
     printSpeed();
-    }
+    }*/
 }
 
 void printSpeed(){
@@ -111,5 +115,52 @@ void stop() {
 }
 
 void goForward(){
-  car.setSpeed(30);
+    car.setSpeed(50);
   }
+
+void reverse(){
+    car.setSpeed(-40);
+  }
+
+void handleInput(){
+  while (Serial.available()>0){
+    char inChar = Serial.read();
+    switch (inChar) {
+    case 'w': // forward
+    setForward();
+    goForward();
+    break;
+    case 's': // reverse
+      reverse();
+      break;
+    case 'a': // turn left
+      setLeft();
+      break;
+    case 'd': // turn right
+      setRight();
+      break;
+    case 'l': // break
+      stop();
+      break;
+    }
+  }
+}
+
+void speedUp(){
+  speed = speed + 20;
+  }
+
+void speedDown(){
+  speed = speed - 20;
+  }
+
+void setForward()
+{
+  car.setAngle(0);
+}
+void setLeft() {
+  car.setAngle(-90);
+}
+void setRight() {
+  car.setAngle(90);
+}
