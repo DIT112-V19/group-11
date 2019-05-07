@@ -60,7 +60,6 @@ void loop() {
   /*if(beep()){
     prevBeep = currentTime;
     }
-
   if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
     distancePrintToggle = currentTime;
     printDistance();
@@ -129,6 +128,7 @@ void handleInput(){
     case 'w': // forward
     setForward();
     goForward();
+    speedDown();
     break;
     case 's': // reverse
       reverse();
@@ -141,6 +141,18 @@ void handleInput(){
       break;
     case 'l': // break
       stop();
+      break;
+    case 'wa': //forward left
+      setForwardLeft();
+      break;
+    case 'wd': //forward right
+      setForwardRight();
+      break;
+    case 'sa': //reverse left
+      setReverseLeft();
+      break;
+      case 'sd': //reverse right
+      setReverseRight();
       break;
     }
   }
@@ -163,4 +175,16 @@ void setLeft() {
 }
 void setRight() {
   car.setAngle(90);
+}
+void setForwardLeft(){
+  car.setAngle(-45);
+}
+void setForwardRight(){
+  car.setAngle(45);
+}
+void setReverseLeft(){
+  car.setAngle(-135);
+}
+void setReverseRight(){
+  car.setAngle(135);
 }
