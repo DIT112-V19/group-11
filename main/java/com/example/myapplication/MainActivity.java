@@ -18,7 +18,23 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.UUID;
 
-public class MainActivity extends AppCompatActivity {
+
+import android.os.Bundle;
+import android.app.Activity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+public class main extends Activity {
+    RelativeLayout layout_joystick;
+    ImageView image_joystick, image_border;
+    TextView textView1, textView2, textView3, textView4, textView5;
+
+    joystickClass js;
 
     private final String DEVICE_ADDRESS = "20:16:12:14:71:18"; //MAC Address of Bluetooth Module
     private final UUID PORT_UUID = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb");
@@ -27,166 +43,156 @@ public class MainActivity extends AppCompatActivity {
     private BluetoothSocket socket;
     private OutputStream outputStream;
 
-    Button forward_btn, forward_left_btn, forward_right_btn, reverse_btn, reverse_left_btn, reverse_right_btn, bluetooth_connect_btn;
+    Button bluetooth_connect_button;
+    String command;
 
-    String command; //string variable that will store value to be transmitted to the bluetooth module
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
 
-        //declaration of button variables
-        forward_btn = (Button) findViewById(R.id.forward_btn);
-        forward_left_btn = (Button) findViewById(R.id.forward_left_btn);
-        forward_right_btn = (Button) findViewById(R.id.forward_right_btn);
-        reverse_btn = (Button) findViewById(R.id.reverse_btn);
-        bluetooth_connect_btn = (Button) findViewById(R.id.bluetooth_connect_btn);
+        textView1 = (TextView)findViewById(R.id.textView1);
+        textView2 = (TextView)findViewById(R.id.textView2);
+        textView3 = (TextView)findViewById(R.id.textView3);
+        textView4 = (TextView)findViewById(R.id.textView4);
+        textView5 = (TextView)findViewById(R.id.textView5);
+        bluetooth_connect_button = (Button) findViewById(R.id.bluetooth_connect_btn);
 
-        //OnTouchListener code for the forward button (button long press)
-        forward_btn.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
+        layout_joystick = (RelativeLayout)findViewById(R.id.layout_joystick);
 
-                if (event.getAction() == MotionEvent.ACTION_DOWN) //MotionEvent.ACTION_DOWN is when you hold a button down
-                {
-                    command = "w";
+        js = new joystickClass(getApplicationContext()
+                , layout_joystick, R.drawable.image_button);
+        js.setStickSize(150, 150);
+        js.setLayoutSize(500, 500);
+        js.setLayoutAlpha(150);
+        js.setStickAlpha(100);
+        js.setOffset(90);
+        js.setMinimumDistance(50);
 
-                    try
-                    {
-                        outputStream.write(command.getBytes()); //transmits the value of command to the bluetooth module
+        layout_joystick.setOnTouchListener(new OnTouchListener() {
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                js.drawStick(arg1);
+                if(arg1.getAction() == MotionEvent.ACTION_DOWN
+                        || arg1.getAction() == MotionEvent.ACTION_MOVE) {
+                    textView1.setText("X : " + String.valueOf(js.getX()));
+                    textView2.setText("Y : " + String.valueOf(js.getY()));
+                    textView3.setText("Angle : " + String.valueOf(js.getAngle()));
+                    textView4.setText("Distance : " + String.valueOf(js.getDistance()));
+
+                    int direction = js.get8Direction();
+                    if(direction == joystickClass.STICK_UP) {
+                        textView5.setText("Direction : Up");
+                        command = "w";
+                        try
+                        {
+                            outputStream.write(command.getBytes()); //transmits the value of command to the bluetooth module
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+
+
+                    } else if(direction == joystickClass.STICK_UPRIGHT) {
+                        textView5.setText("Direction : Up Right");
+                        command = "wd";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_RIGHT) {
+                        textView5.setText("Direction : Right");
+                        command = "d";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_DOWNRIGHT) {
+                        textView5.setText("Direction : Down Right");
+                        command = "sd";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_DOWN) {
+                        textView5.setText("Direction : Down");
+                        command = "s";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_DOWNLEFT) {
+                        textView5.setText("Direction : Down Left");
+                        command = "sa";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_LEFT) {
+                        textView5.setText("Direction : Left");
+                        command = "a";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_UPLEFT) {
+                        textView5.setText("Direction : Up Left");
+                        command = "wa";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch (IOException e)
+                        {
+                            e.printStackTrace();
+                        }
+                    } else if(direction == joystickClass.STICK_NONE) {
+                        textView5.setText("Direction : Center");
+                        command = "l";
+                        try
+                        {
+                            outputStream.write(command.getBytes());
+                        }
+                        catch(IOException e)
+                        {
+                            e.printStackTrace();
+                        }
                     }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
+                } else if(arg1.getAction() == MotionEvent.ACTION_UP) {
+                    textView1.setText("X :");
+                    textView2.setText("Y :");
+                    textView3.setText("Angle :");
+                    textView4.setText("Distance :");
+                    textView5.setText("Direction :");
                 }
-                else if(event.getAction() == MotionEvent.ACTION_UP) //MotionEvent.ACTION_UP is when you release a button
-                {
-                    command = "l";
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch(IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                }
-
-                return false;
-            }
-
-        });
-
-        //OnTouchListener code for the reverse button (button long press)
-        reverse_btn.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
-                    command = "s";
-
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                else if(event.getAction() == MotionEvent.ACTION_UP)
-                {
-                    command = "l";
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch(IOException e)
-                    {
-
-                    }
-
-                }
-                return false;
-            }
-        });
-
-        //OnTouchListener code for the forward left button (button long press)
-        forward_left_btn.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
-                    command = "a";
-
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                else if(event.getAction() == MotionEvent.ACTION_UP)
-                {
-                    command = "l";
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch(IOException e)
-                    {
-
-                    }
-
-                }
-                return false;
-            }
-        });
-
-        //OnTouchListener code for the forward right button (button long press)
-        forward_right_btn.setOnTouchListener(new View.OnTouchListener(){
-            @Override
-            public boolean onTouch(View v, MotionEvent event)
-            {
-                if(event.getAction() == MotionEvent.ACTION_DOWN)
-                {
-                    command = "d";
-
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch (IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-                else if(event.getAction() == MotionEvent.ACTION_UP)
-                {
-                    command = "l";
-                    try
-                    {
-                        outputStream.write(command.getBytes());
-                    }
-                    catch(IOException e)
-                    {
-                        e.printStackTrace();
-                    }
-
-                }
-                return false;
+                return true;
             }
         });
 
-        //Button that connects the device to the bluetooth module when pressed
-        bluetooth_connect_btn.setOnClickListener(new View.OnClickListener() {
+        bluetooth_connect_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -197,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     //Initializes bluetooth module
@@ -289,6 +294,5 @@ public class MainActivity extends AppCompatActivity {
     }
 
 }
-
 
 
