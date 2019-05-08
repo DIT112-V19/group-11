@@ -1,5 +1,31 @@
 #include <Smartcar.h>
 
+
+const int yellowRight = 20;// declaring LEDpins.
+const int redRight = 18;
+const int yellowLeft = 21;
+const int redLeft = 19;
+
+unsigned long yellowCurrent;// Declaring the different Current millis.
+unsigned long redCurrent;
+unsigned long yellowTurningCurrent;
+unsigned long redTurningCurrent;
+unsigned long redBackingCurrent;
+unsigned long yellowBackingCurrent; 
+
+unsigned long previousYellowDrive = 0;// Declaring  the different Previous Millis.
+unsigned long yellowTurnPrev = 0;
+unsigned long redTurnPrev = 0;
+unsigned long previousRedDrive = 0;
+unsigned long yellowBackPrev = 0;
+unsigned long redBackPrev = 0; 
+
+const long YellowDrivingInterval = 2700; // Declaring the different lighting intervals.
+const long redDrivingInterval = 1500 ;
+const long turningInterval = 200;
+const long BackingInterval = 900;
+
+
 const unsigned short LEFT_ODOMETER_PIN = 2;
 const unsigned short RIGHT_ODOMETER_PIN = 3;
 unsigned long beepInterval = 10;
@@ -34,8 +60,13 @@ void setup() {
   rightOdometer.attach(RIGHT_ODOMETER_PIN, []() {
     rightOdometer.update();
   });
-  
-  }
+
+  pinMode(yellowRight, OUTPUT); // Declaring the LED lights pin modes.
+  pinMode(redRight, OUTPUT);
+  pinMode(yellowLeft, OUTPUT);
+  pinMode(redLeft, OUTPUT);
+
+}
 
 int fDistance = 0;
 int rDistance = 0;
@@ -49,122 +80,132 @@ void loop() {
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
   Serial.println(fDistance);
-  if(fDistance < 15 && fDistance != 0){
-      stop();
-      }
- /* if(rDistance < 10 && rDistance != 0){
-      stop();
-      }*/
+  if (fDistance < 15 && fDistance != 0) {
+    stop();
+  }
+  /* if(rDistance < 10 && rDistance != 0){
+       stop();
+       }*/
   handleInput();
 
   /*if(beep()){
     prevBeep = currentTime;
     }
-  if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
+    if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
     distancePrintToggle = currentTime;
     printDistance();
     printSpeed();
     }*/
 }
 
-void printSpeed(){
+void printSpeed() {
   Serial.print("Speed: ");
   Serial.println(car.getSpeed());
   rightOdometer.update();
   leftOdometer.update();
-  }
+}
 
-boolean intervalCheck(unsigned long interval, unsigned long toggle){ // handles interval checking for a given interval and the respective toggle
-  if(currentTime > distancePrintToggle + interval){
+boolean intervalCheck(unsigned long interval, unsigned long toggle) { // handles interval checking for a given interval and the respective toggle
+  if (currentTime > distancePrintToggle + interval) {
     return true;
-    } else{
-      return false;
-      }
-  }
-
-boolean beep(){
-  if(rDistance <= 50 && rDistance != 0){
-    beepInterval = rDistance * 20;
-    
-    if(currentTime > prevBeep + beepInterval){
-      Serial.println("Beep"); // stand-in for actual audible beep
-      return true;
-      }
-    }
+  } else {
     return false;
   }
+}
 
-void printDistance(){
-  if(fDistance == 0){
+boolean beep() {
+  if (rDistance <= 50 && rDistance != 0) {
+    beepInterval = rDistance * 20;
+
+    if (currentTime > prevBeep + beepInterval) {
+      Serial.println("Beep"); // stand-in for actual audible beep
+      return true;
+    }
+  }
+  return false;
+}
+
+void printDistance() {
+  if (fDistance == 0) {
     Serial.println("No Object Found In Front");
-    } else{
-      Serial.print("Front distance: ");
-      Serial.println(fDistance);
-      }
-  if(rDistance == 0){
+  } else {
+    Serial.print("Front distance: ");
+    Serial.println(fDistance);
+  }
+  if (rDistance == 0) {
     Serial.println("No Object Found Behind");
-  } else{
+  } else {
     Serial.print("Rear distance: ");
     Serial.println(rDistance);
-    }
+  }
 }
 
 void stop() {
   car.setSpeed(0);
+
 }
 
-void goForward(){
-    car.setSpeed(50);
-  }
+void goForward() {
+  car.setSpeed(50);
+}
 
-void reverse(){
-    car.setSpeed(-40);
-  }
+void reverse() {
+  car.setSpeed(-40);
+}
 
-void handleInput(){
-  while (Serial.available()>0){
+void handleInput() {
+  while (Serial.available() > 0) {
     char inChar = Serial.read();
     switch (inChar) {
-    case 'w': // forward
-    setForward();
-    goForward();
-    speedDown();
-    break;
-    case 's': // reverse
-      reverse();
-      break;
-    case 'a': // turn left
-      setLeft();
-      break;
-    case 'd': // turn right
-      setRight();
-      break;
-    case 'l': // break
-      stop();
-      break;
-    case 'wa': //forward left
-      setForwardLeft();
-      break;
-    case 'wd': //forward right
-      setForwardRight();
-      break;
-    case 'sa': //reverse left
-      setReverseLeft();
-      break;
+      case 'w': // forward
+        setForward();
+        goForward();
+        speedDown();
+        drivingLights();
+        break;
+      case 's': // reverse
+        reverse();
+        backingLights();
+        break;
+      case 'a': // turn left
+        setLeft();
+        leftTurnLights();
+        break;
+      case 'd': // turn right
+        setRight();
+        rightTurningLights();
+        break;
+      case 'l': // break
+        stop();
+        stopLights();
+        break;
+      case 'wa': //forward left
+        setForwardLeft();
+        leftTurnLights();
+        break;
+      case 'wd': //forward right
+        setForwardRight();
+        rightTurningLights();
+        break;
+      case 'sa': //reverse left
+        setReverseLeft();
+        backingLights();
+        break;
       case 'sd': //reverse right
-      setReverseRight();
-      break;
+        setReverseRight();
+        backingLights();
+        break;
     }
   }
 }
 
-void speedUp(){
+void speedUp() {
   speed = speed + 20;
-  }
+}
 
-void speedDown(){
+void speedDown() {
   speed = speed - 20;
-  }
+}
 
 void setForward()
 {
@@ -176,15 +217,80 @@ void setLeft() {
 void setRight() {
   car.setAngle(90);
 }
-void setForwardLeft(){
+void setForwardLeft() {
   car.setAngle(-45);
 }
-void setForwardRight(){
+void setForwardRight() {
   car.setAngle(45);
 }
-void setReverseLeft(){
+void setReverseLeft() {
   car.setAngle(-135);
 }
-void setReverseRight(){
+void setReverseRight() {
   car.setAngle(135);
 }
+
+//LED lighting modes methods
+
+void drivingLights() { // this method turns on the driving mode Lights.
+  yellowCurrent = millis();
+  if (yellowCurrent - previousYellowDrive >= YellowDrivingInterval) {
+    digitalWrite(yellowRight, !digitalRead(yellowRight));
+    digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+    previousYellowDrive = yellowCurrent;
+  }
+
+  redCurrent = millis();
+  if (redCurrent - previousRedDrive >= redDrivingInterval) {
+    digitalWrite(redRight, !digitalRead(redRight));
+    digitalWrite(redLeft, !digitalRead(redLeft));
+    previousRedDrive = redCurrent;
+  }
+}
+
+void rightTurningLights() { // This method turns on right Lights while the car is turning Right.
+  yellowTurningCurrent = millis();
+  if (yellowTurningCurrent - yellowTurnPrev >= turningInterval) {
+    digitalWrite(yellowRight, !digitalRead(yellowRight));
+    yellowTurnPrev = yellowTurningCurrent;
+  }
+  redTurningCurrent = millis();
+  if (redTurningCurrent - redTurnPrev >= turningInterval) {
+    digitalWrite(redRight, !digitalRead(redRight));
+    redTurnPrev = redTurningCurrent;
+  }
+}
+
+void leftTurnLights() { // This methods turns on left lights while the car is turning left
+  yellowTurningCurrent = millis();
+  if (yellowTurningCurrent - yellowTurnPrev >= turningInterval) {
+    digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+    yellowTurnPrev = yellowTurningCurrent;
+  }
+  redTurningCurrent = millis();
+  if (redTurningCurrent - redTurnPrev >= turningInterval) {
+    digitalWrite(redLeft, !digitalRead(redLeft));
+    redTurnPrev = redTurningCurrent;
+  }
+}
+
+void backingLights() { // This method turns on backing lights.
+  yellowBackingCurrent = millis();
+  if (yellowBackingCurrent - yellowBackPrev >= BackingInterval) {
+    digitalWrite(yellowRight, !digitalRead(yellowRight));
+    digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+    yellowBackPrev = yellowBackingCurrent;
+  }
+  redBackingCurrent = millis();
+  if (redBackingCurrent - redBackPrev >= BackingInterval) {
+    digitalWrite(redRight, !digitalRead(redRight));
+    digitalWrite(redLeft, !digitalRead(redLeft));
+    redBackPrev = redBackingCurrent;
+  }
+}
+
+void stopLights() { // This method turns on stop Lights
+  rightTurningLights();
+  leftTurnLights();
+}
+
