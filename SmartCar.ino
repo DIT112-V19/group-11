@@ -1,5 +1,20 @@
 #include <Smartcar.h>
 
+
+const int yellowRight = 20;// declaring LEDpins.
+const int redRight = 18;
+const int yellowLeft = 21;
+const int redLeft = 19;
+
+unsigned long yellowCurrent,redCurrent,yellowTurningCurrent,redTurningCurrent,redBackingCurrent,yellowBackingCurrent; // Declaring the different Current millis.
+unsigned long previousYellowDrive,yellowTurnPrev,redTurnPrev, previousRedDrive,yellowBackPrev,redBackPrev = 0; // Declaring  the different Previous Millis.
+
+const long YellowDrivingInterval = 2700; // Declaring the different lighting intervals.
+const long redDrivingInterval =1500 ;
+const long turningInterval =200;
+const long BackingInterval =900;
+
+
 const unsigned short LEFT_ODOMETER_PIN = 2;
 const unsigned short RIGHT_ODOMETER_PIN = 3;
 unsigned long beepInterval = 10;
@@ -34,6 +49,11 @@ void setup() {
   rightOdometer.attach(RIGHT_ODOMETER_PIN, []() {
     rightOdometer.update();
   });
+
+  pinMode(yellowRight, OUTPUT); // Declaring the LED lights pin modes.
+  pinMode(redRight, OUTPUT);
+  pinMode(yellowLeft, OUTPUT);
+  pinMode(redLeft, OUTPUT);
   
   }
 
@@ -111,6 +131,7 @@ void printDistance(){
 
 void stop() {
   car.setSpeed(0);
+  
 }
 
 void goForward(){
@@ -129,30 +150,39 @@ void handleInput(){
     setForward();
     goForward();
     speedDown();
+    drivingLights();
     break;
     case 's': // reverse
       reverse();
+      backingLights();
       break;
     case 'a': // turn left
       setLeft();
+      leftTurnLights();
       break;
-    case 'd': // turn right
+    case 'd': // turn right                       
       setRight();
+      rightTurningLights();
       break;
     case 'l': // break
       stop();
+      stopLights();
       break;
     case 'wa': //forward left
       setForwardLeft();
+      leftTurnLights();
       break;
     case 'wd': //forward right
       setForwardRight();
+      rightTurningLights();
       break;
     case 'sa': //reverse left
-      setReverseLeft();
+       setReverseLeft();
+       backingLights();
       break;
       case 'sd': //reverse right
       setReverseRight();
+      backingLights();
       break;
     }
   }
@@ -188,3 +218,68 @@ void setReverseLeft(){
 void setReverseRight(){
   car.setAngle(135);
 }
+
+//LED lighting modes methods
+
+ void drivingLights(){ // this method turns on the driving mode Lights.
+  yellowCurrent = millis();
+  if(yellowCurrent -previousYellowDrive>=YellowDrivingInterval){
+  digitalWrite(yellowRight, !digitalRead(yellowRight));
+  digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+  previousYellowDrive = yellowCurrent;  
+ }
+  
+ redCurrent = millis();
+ if(redCurrent -previousRedDrive>=redDrivingInterval){
+  digitalWrite(redRight, !digitalRead(redRight));
+  digitalWrite(redLeft, !digitalRead(redLeft));
+  previousRedDrive = redCurrent;
+ }
+ }
+ 
+ void rightTurningLights(){ // This method turns on right Lights while the car is turning Right.
+  yellowTurningCurrent = millis();
+  if(yellowTurningCurrent - yellowTurnPrev >=turningInterval){
+  digitalWrite(yellowRight, !digitalRead(yellowRight));
+  yellowTurnPrev = yellowTurningCurrent;  
+ }
+ redTurningCurrent = millis();
+  if(redTurningCurrent - redTurnPrev >=turningInterval){
+  digitalWrite(redRight, !digitalRead(redRight));
+  redTurnPrev = redTurningCurrent;  
+ }
+ }
+
+ void leftTurnLights(){ // This methods turns on left lights while the car is turning left
+  yellowTurningCurrent = millis();
+  if(yellowTurningCurrent - yellowTurnPrev >=turningInterval){
+  digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+  yellowTurnPrev = yellowTurningCurrent;  
+ }
+ redTurningCurrent = millis();
+  if(redTurningCurrent - redTurnPrev >=turningInterval){
+  digitalWrite(redLeft, !digitalRead(redLeft));
+  redTurnPrev = redTurningCurrent;  
+ }
+ }
+ 
+ void backingLights(){ // This method turns on backing lights.
+  yellowBackingCurrent = millis();
+  if(yellowBackingCurrent - yellowBackPrev >= BackingInterval){
+  digitalWrite(yellowRight, !digitalRead(yellowRight));
+  digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+  yellowBackPrev = yellowBackingCurrent;  
+ }
+ redBackingCurrent = millis();
+  if(redBackingCurrent - redBackPrev >= BackingInterval){
+  digitalWrite(redRight, !digitalRead(redRight));
+  digitalWrite(redLeft, !digitalRead(redLeft));
+  redBackPrev = redBackingCurrent;  
+ }
+ }
+
+ void stopLights(){ // This method turns on stop Lights
+  rightTurningLights();
+  leftTurnLights();
+ }
+ 
