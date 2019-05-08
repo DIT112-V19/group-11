@@ -24,6 +24,10 @@ SR04 fSensor(fTrigPin, fEchoPin, 200);
 SR04 rSensor(rTrigPin, rEchoPin, 100);
 
 SmartCar car(control, gyroscope, leftOdometer, rightOdometer);
+const int yellowRight = 20;
+const int redRight = 18;
+const int yellowLeft = 21;
+const int redLeft = 19;
 
 void setup() {
   Serial.begin(9600);
@@ -34,6 +38,11 @@ void setup() {
   rightOdometer.attach(RIGHT_ODOMETER_PIN, []() {
     rightOdometer.update();
   });
+
+  pinMode(yellowRight,OUTPUT);
+  pinMode(redRight,OUTPUT);
+  pinMode(yellowLeft,OUTPUT);
+  pinMode(redLeft,OUTPUT);
   
   }
 
@@ -128,7 +137,7 @@ void handleInput(){
     case 'w': // forward
     setForward();
     goForward();
-    speedDown();
+    
     break;
     case 's': // reverse
       reverse();
@@ -142,22 +151,36 @@ void handleInput(){
     case 'l': // break
       stop();
       break;
-    case 'wa': //forward left
+    case 'q': //forward left
       setForwardLeft();
       break;
-    case 'wd': //forward right
+    case 'e': //forward right
       setForwardRight();
       break;
-    case 'sa': //reverse left
+    case 'z': //reverse left
       setReverseLeft();
       break;
-      case 'sd': //reverse right
+      case 'x': //reverse right
       setReverseRight();
       break;
+    case '5':                
+       digitalWrite(yellowRight,HIGH);
+       digitalWrite(redRight,HIGH);
+       digitalWrite(yellowLeft,HIGH);
+       digitalWrite(redLeft,HIGH);
+       Serial.println(inChar);
+       Serial.println("LED is ON");
+      break;
+    case '6':
+       digitalWrite(yellowRight,LOW);
+       digitalWrite(redRight,LOW);
+       digitalWrite(yellowLeft,LOW);
+       digitalWrite(redLeft,LOW);
+        Serial.println(inChar);
+        Serial.println("LED is OFF");
+        }
     }
   }
-}
-
 void speedUp(){
   speed = speed + 20;
   }
@@ -169,22 +192,31 @@ void speedDown(){
 void setForward()
 {
   car.setAngle(0);
+ 
 }
 void setLeft() {
-  car.setAngle(-90);
+  car.setAngle(-70);
+  
 }
 void setRight() {
-  car.setAngle(90);
+  car.setAngle(70);
+  
 }
 void setForwardLeft(){
   car.setAngle(-45);
+  
+  
 }
 void setForwardRight(){
   car.setAngle(45);
+  
+  
 }
 void setReverseLeft(){
   car.setAngle(-135);
+   
 }
 void setReverseRight(){
   car.setAngle(135);
+    
 }
