@@ -33,6 +33,8 @@ public class main extends Activity {
     RelativeLayout layout_joystick;
     ImageView image_joystick, image_border;
     TextView textView1, textView2, textView3, textView4, textView5;
+    Button on_button;
+    Button off_button;
 
     joystickClass js;
 
@@ -56,6 +58,8 @@ public class main extends Activity {
         textView4 = (TextView)findViewById(R.id.textView4);
         textView5 = (TextView)findViewById(R.id.textView5);
         bluetooth_connect_button = (Button) findViewById(R.id.bluetooth_connect_btn);
+        on_button = (Button)findViewById(R.id.on_button);
+        off_button = (Button)findViewById(R.id.off_button);
 
         layout_joystick = (RelativeLayout)findViewById(R.id.layout_joystick);
 
@@ -79,109 +83,54 @@ public class main extends Activity {
                     textView4.setText("Distance : " + String.valueOf(js.getDistance()));
 
                     int direction = js.get8Direction();
-                    if(direction == joystickClass.STICK_UP) {
+                    switch (direction) {
+
+                    case joystickClass.STICK_UP: 
                         textView5.setText("Direction : Up");
                         command = "w";
-                        try
-                        {
-                            outputStream.write(command.getBytes()); //transmits the value of command to the bluetooth module
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-
-
-                    } else if(direction == joystickClass.STICK_UPRIGHT) {
+                        break;
+                    case joystickClass.STICK_UPRIGHT: 
                         textView5.setText("Direction : Up Right");
-                        command = "wd";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_RIGHT) {
+                        command = "e";
+                        break;
+                    case joystickClass.STICK_RIGHT: 
                         textView5.setText("Direction : Right");
                         command = "d";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_DOWNRIGHT) {
+                        break;
+                    case joystickClass.STICK_DOWNRIGHT: 
                         textView5.setText("Direction : Down Right");
-                        command = "sd";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_DOWN) {
+                        command = "x";
+                        break;
+                    case joystickClass.STICK_DOWN: 
                         textView5.setText("Direction : Down");
                         command = "s";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_DOWNLEFT) {
+                        break;                       
+                    case joystickClass.STICK_DOWNLEFT: 
                         textView5.setText("Direction : Down Left");
-                        command = "sa";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_LEFT) {
+                        command = "z";
+                        break;
+                    case joystickClass.STICK_LEFT:
                         textView5.setText("Direction : Left");
                         command = "a";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_UPLEFT) {
+                        break;
+                    case joystickClass.STICK_UPLEFT:
                         textView5.setText("Direction : Up Left");
-                        command = "wa";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch (IOException e)
-                        {
-                            e.printStackTrace();
-                        }
-                    } else if(direction == joystickClass.STICK_NONE) {
+                        command = "q";
+                        break;
+                    case joystickClass.STICK_NONE:
                         textView5.setText("Direction : Center");
                         command = "l";
-                        try
-                        {
-                            outputStream.write(command.getBytes());
-                        }
-                        catch(IOException e)
-                        {
-                            e.printStackTrace();
-                        }
+                        break;
                     }
-                } else if(arg1.getAction() == MotionEvent.ACTION_UP) {
+                    try
+                        {
+                        outputStream.write(command.getBytes());
+                        }
+                    catch(IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+                }else if(arg1.getAction() == MotionEvent.ACTION_UP) {
                     textView1.setText("X :");
                     textView2.setText("Y :");
                     textView3.setText("Angle :");
@@ -192,6 +141,30 @@ public class main extends Activity {
             }
         });
 
+        on_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                command = "5";
+                try {
+                    outputStream.write(command.getBytes());
+                }
+                catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        });
+        off_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                command = "6";
+                try{
+                    outputStream.write(command.getBytes());
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        });
         bluetooth_connect_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
