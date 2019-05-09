@@ -1,3 +1,4 @@
+
 package com.example.myapplication;
 
 import android.support.v7.app.AppCompatActivity;
@@ -14,9 +15,16 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.sql.SQLOutput;
+import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 import android.os.Bundle;
@@ -35,6 +43,8 @@ public class main extends Activity {
     TextView textView1, textView2, textView3, textView4, textView5;
     Button on_button;
     Button off_button;
+    TextView speed;
+    Scanner scanner;
 
     joystickClass js;
 
@@ -44,13 +54,17 @@ public class main extends Activity {
     private BluetoothDevice device;
     private BluetoothSocket socket;
     private OutputStream outputStream;
-
+    private InputStream inputStream;
     Button bluetooth_connect_button;
     String command;
+    private byte[] reader;
+    String string;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
 
         textView1 = (TextView)findViewById(R.id.textView1);
         textView2 = (TextView)findViewById(R.id.textView2);
@@ -60,6 +74,7 @@ public class main extends Activity {
         bluetooth_connect_button = (Button) findViewById(R.id.bluetooth_connect_btn);
         on_button = (Button)findViewById(R.id.on_button);
         off_button = (Button)findViewById(R.id.off_button);
+        speed =  findViewById(R.id.speed);
 
         layout_joystick = (RelativeLayout)findViewById(R.id.layout_joystick);
 
@@ -74,6 +89,7 @@ public class main extends Activity {
 
         layout_joystick.setOnTouchListener(new OnTouchListener() {
             public boolean onTouch(View arg0, MotionEvent arg1) {
+
                 js.drawStick(arg1);
                 if(arg1.getAction() == MotionEvent.ACTION_DOWN
                         || arg1.getAction() == MotionEvent.ACTION_MOVE) {
@@ -124,12 +140,22 @@ public class main extends Activity {
                     }
                     try
                         {
+
                         outputStream.write(command.getBytes());
                         }
                     catch(IOException e)
                     {
                         e.printStackTrace();
                     }
+                   // final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+                    //executorService.scheduleAtFixedRate(new Runnable() {
+                      //  @Override
+                        //public void run() {
+                            inputStream();
+
+                        //}
+                    //} , 0, 1, TimeUnit.SECONDS);
+
                 }else if(arg1.getAction() == MotionEvent.ACTION_UP) {
                     textView1.setText("X :");
                     textView2.setText("Y :");
@@ -175,12 +201,13 @@ public class main extends Activity {
                 }
 
             }
+
         });
+        //inputStream();
     }
 
     //Initializes bluetooth module
-    public boolean BTinit()
-    {
+    public boolean BTinit(){
         boolean found = false;
 
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -227,6 +254,7 @@ public class main extends Activity {
         return found;
     }
 
+
     public boolean BTconnect()
     {
         boolean connected = true;
@@ -235,6 +263,7 @@ public class main extends Activity {
         {
             socket = device.createRfcommSocketToServiceRecord(PORT_UUID); //Creates a socket to handle the outgoing connection
             socket.connect();
+
 
             Toast.makeText(getApplicationContext(),
                     "Connection to bluetooth device successful", Toast.LENGTH_LONG).show();
@@ -249,7 +278,12 @@ public class main extends Activity {
         {
             try
             {
+             //   speed.setText("connected");
+                System.out.println("success");
+                inputStream = socket.getInputStream();
                 outputStream = socket.getOutputStream(); //gets the output stream of the socket
+               // inputStream = socket.getInputStream();
+
             }
             catch(IOException e)
             {
@@ -260,6 +294,55 @@ public class main extends Activity {
         return connected;
     }
 
+
+
+    private void inputStream() {
+    reader = new byte[1024];
+
+
+        try {
+
+
+inputStream.read(reader);
+String stringbytes = new String(reader);
+           // System.out.println(stringbytes);
+            stringbytes = stringbytes.substring(0, 4);
+
+speed.setText(stringbytes);
+
+        } catch (IOException x) {
+            speed.setText("didnt work");
+        }
+        catch (NullPointerException x){
+            speed.setText("failll");
+        }
+    }
+
+
+
+
+/*
+scanner method
+        scanner = new Scanner(inputStream);
+
+        try {
+            scanner = new Scanner(inputStream);
+                    if (scanner.hasNext()) {
+                        speed.setText(scanner.next() + " ... speed");
+
+                    }
+                    else  {
+                        speed.setText("failed");
+                    }
+
+    } catch (NullPointerException e){
+           speed.setText("extra fail");
+
+        }
+
+    }*/
+
+
     @Override
     protected void onStart()
     {
@@ -267,5 +350,6 @@ public class main extends Activity {
     }
 
 }
+
 
 
