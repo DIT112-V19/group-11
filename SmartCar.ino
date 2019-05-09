@@ -78,13 +78,14 @@ void loop() {
   fDistance = fSensor.getDistance();
   rDistance = rSensor.getDistance();
   Serial.println(fDistance);
-  if (fDistance < 15 && fDistance != 0) {
+  /*if (fDistance < 15 && fDistance != 0) {
     stop();
   }
   /* if(rDistance < 10 && rDistance != 0){
        stop();
        }*/
   handleInput();
+  printSpeed();
 
   /*if(beep()){
     prevBeep = currentTime;
@@ -97,8 +98,7 @@ void loop() {
 }
 
 void printSpeed() {
-  Serial.print("Speed: ");
-  Serial.println(car.getSpeed());
+  Serial.print(car.getSpeed());
   rightOdometer.update();
   leftOdometer.update();
 }
@@ -143,11 +143,11 @@ void stop() {
 }
 
 void goForward() {
-  car.setSpeed(50);
+  car.setSpeed(70);
 }
 
 void reverse() {
-  car.setSpeed(-40);
+  car.setSpeed(-60);
 }
 
 void handleInput() {
@@ -158,7 +158,6 @@ void handleInput() {
         setForward();
         goForward();
         drivingLights();
-
         break;
       case 's': // reverse
         reverse();
