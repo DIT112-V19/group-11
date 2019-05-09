@@ -47,6 +47,7 @@ const long YellowDrivingInterval = 2700; // Declaring the different lighting int
 const long redDrivingInterval = 1500 ;
 const long turningInterval = 200;
 const long BackingInterval = 900;
+const long stopInterval = 60;
 
 
 void setup() {
@@ -80,8 +81,8 @@ void loop() {
   Serial.println(fDistance);
   /*if (fDistance < 15 && fDistance != 0) {
     stop();
-  }
-  /* if(rDistance < 10 && rDistance != 0){
+    }
+    /* if(rDistance < 10 && rDistance != 0){
        stop();
        }*/
   handleInput();
@@ -309,6 +310,24 @@ void backingLights() { // This method turns on backing lights.
 }
 
 void stopLights() { // This method turns on stop Lights
-  rightTurningLights();
-  leftTurnLights();
+  yellowTurningCurrent = millis();
+  if (yellowTurningCurrent - yellowTurnPrev >= stopInterval) {
+    digitalWrite(yellowRight, !digitalRead(yellowRight));
+    yellowTurnPrev = yellowTurningCurrent;
+  }
+  redTurningCurrent = millis();
+  if (redTurningCurrent - redTurnPrev >= stopInterval) {
+    digitalWrite(redRight, !digitalRead(redRight));
+    redTurnPrev = redTurningCurrent;
+  }
+  yellowTurningCurrent = millis();
+  if (yellowTurningCurrent - yellowTurnPrev >= stopInterval) {
+    digitalWrite(yellowLeft, !digitalRead(yellowLeft));
+    yellowTurnPrev = yellowTurningCurrent;
+  }
+  redTurningCurrent = millis();
+  if (redTurningCurrent - redTurnPrev >= stopInterval) {
+    digitalWrite(redLeft, !digitalRead(redLeft));
+    redTurnPrev = redTurningCurrent;
+  }
 }
