@@ -24,10 +24,10 @@ SR04 fSensor(fTrigPin, fEchoPin, 200);
 SR04 rSensor(rTrigPin, rEchoPin, 100);
 
 SmartCar car(control, gyroscope, leftOdometer, rightOdometer);
-const int yellowRight = 20;
-const int redRight = 18;
-const int yellowLeft = 21;
-const int redLeft = 19;
+const int yellowRight = 34;
+const int redRight = 31;
+const int yellowLeft = 5;
+const int redLeft = 4;
 
 unsigned long yellowCurrent;// Declaring the different Current millis.
 unsigned long redCurrent;
