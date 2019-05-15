@@ -24,10 +24,11 @@ SR04 fSensor(fTrigPin, fEchoPin, 200);
 SR04 rSensor(rTrigPin, rEchoPin, 100);
 
 SmartCar car(control, gyroscope, leftOdometer, rightOdometer);
-const int yellowRight = 34;
-const int redRight = 31;
-const int yellowLeft = 5;
-const int redLeft = 4;
+
+const int yellowRight = 50;// LEDs pins
+const int redRight = 49;
+const int yellowLeft = 48;
+const int redLeft = 47;
 
 unsigned long yellowCurrent;// Declaring the different Current millis.
 unsigned long redCurrent;
@@ -48,6 +49,11 @@ const long redDrivingInterval = 1500 ;
 const long turningInterval = 200;
 const long BackingInterval = 900;
 const long stopInterval = 60;
+
+const int buzzer = 51;// Declaring the Buzzer pin variables.
+unsigned long lastPeriodStart;
+const int beepOnDuration = 150;
+const int beepPeriodDuration = 200;
 
 
 void setup() {
@@ -77,54 +83,54 @@ unsigned long currentTime = 0;
 int a = 0;
 void loop() {
   handleInput();
-   
-   }
-  //currentTime = millis();
-  //Serial.println(fDistance);
-  /*if (fDistance < 15 && fDistance != 0) {
+
+}
+//currentTime = millis();
+//Serial.println(fDistance);
+/*if (fDistance < 15 && fDistance != 0) {
+  stop();
+  }
+  /* if(rDistance < 10 && rDistance != 0){
+     stop();
+     }*/
+// handleInput();
+//printSpeed();
+
+/*if(beep()){
+  prevBeep = currentTime;
+  }
+  if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
+  distancePrintToggle = currentTime;
+  printDistance();
+  printSpeed();
+  }*/
+
+
+void autoMode() {
+
+  while (true) {
+    fSensor.getDistance();
+    setForward();
+    goForward();
+    obstacleAvoidance();
     stop();
-    }
-    /* if(rDistance < 10 && rDistance != 0){
-       stop();
-       }*/
- // handleInput();
-  //printSpeed();
-
-  /*if(beep()){
-    prevBeep = currentTime;
-    }
-    if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
-    distancePrintToggle = currentTime;
-    printDistance();
-    printSpeed();
-    }*/
+    delay(500);
+    reverse();
+    rotateOnSpot(90, 50);
 
 
-void autoMode(){
- 
-   while (true){
-   fSensor.getDistance();
-   setForward();
-   goForward();
-   obstacleAvoidance();
-   stop();
-   delay(500);
-   reverse();
-   rotateOnSpot(90,50);
-   
-   
-}
+  }
 }
 
-void obstacleAvoidance(){
+void obstacleAvoidance() {
   boolean go = true;
-  while(go){
+  while (go) {
     setForward();
     goForward();
     fDistance = fSensor.getDistance();
 
-    if(fDistance < 15 && fDistance != 0){
-   go = false;
+    if (fDistance < 15 && fDistance != 0) {
+      go = false;
     }
   }
 }
@@ -148,7 +154,7 @@ boolean beep() {
     beepInterval = rDistance * 20;
 
     if (currentTime > prevBeep + beepInterval) {
-      Serial.println("Beep"); // stand-in for actual audible beep
+      beepingTone();
       return true;
     }
   }
@@ -240,7 +246,7 @@ void handleInput() {
         Serial.println(inChar);
         Serial.println("LED is OFF");
         break;
-        case 'g':
+      case 'g':
         autoMode();
     }
   }
@@ -371,29 +377,37 @@ void stopLights() { // This method turns on stop Lights
 void rotateOnSpot(int targetDegrees, int speed) {
 
   targetDegrees = targetDegrees * 0.87;
-  
+
   speed = smartcarlib::utils::getAbsolute(speed);
   targetDegrees %= 360;
   if (!targetDegrees) return;
-  
-  if (targetDegrees > 0) { 
-    car.overrideMotorSpeed(speed, -speed); 
-  } else { 
-    car.overrideMotorSpeed(-speed, speed); 
+
+  if (targetDegrees > 0) {
+    car.overrideMotorSpeed(speed, -speed);
+  } else {
+    car.overrideMotorSpeed(-speed, speed);
   }
-  unsigned int initialHeading = car.getHeading(); 
-  int degreesTurnedSoFar = 0; 
-  while (abs(degreesTurnedSoFar) < abs(targetDegrees)) { 
-    gyroscope.update(); 
-    int currentHeading = car.getHeading(); 
+  unsigned int initialHeading = car.getHeading();
+  int degreesTurnedSoFar = 0;
+  while (abs(degreesTurnedSoFar) < abs(targetDegrees)) {
+    gyroscope.update();
+    int currentHeading = car.getHeading();
     Serial.println(currentHeading);
-    if ((targetDegrees < 0) && (currentHeading > initialHeading)) { 
-      
-      currentHeading -= 360; 
-    } else if ((targetDegrees > 0) && (currentHeading < initialHeading)) { 
+    if ((targetDegrees < 0) && (currentHeading > initialHeading)) {
+
+      currentHeading -= 360;
+    } else if ((targetDegrees > 0) && (currentHeading < initialHeading)) {
       currentHeading += 360;
     }
-    degreesTurnedSoFar = initialHeading - currentHeading; 
+    degreesTurnedSoFar = initialHeading - currentHeading;
   }
   stop();
+}
+// Beeping Method
+void beepingTone() {
+  if (millis() - lastPeriodStart >=beepPeriodDuration)
+  {
+    lastPeriodStart += beepPeriodDuration;
+    tone(buzzer, 550, beepOnDuration); // play 550 Hz tone in background for 'beepOnDuration'
+  }
 }
