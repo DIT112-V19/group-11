@@ -9,7 +9,7 @@ BrushedMotor leftMotor(8, 10, 9);
 BrushedMotor rightMotor(12, 13, 11);
 DifferentialControl control(leftMotor, rightMotor);
 
-GY50 gyroscope(37);
+GY50 gyroscope(0);
 DirectionlessOdometer leftOdometer(100);
 DirectionlessOdometer rightOdometer(100);
 
@@ -65,6 +65,7 @@ void setup() {
   pinMode(yellowLeft, OUTPUT);
   pinMode(redLeft, OUTPUT);
 
+
 }
 
 int fDistance = 0;
@@ -73,20 +74,21 @@ const unsigned long DISTANCE_PRINT_INTERVAL = 1000; // one second
 unsigned long distancePrintToggle = 0;
 
 unsigned long currentTime = 0;
-
+int a = 0;
 void loop() {
-  currentTime = millis();
-  fDistance = fSensor.getDistance();
-  rDistance = rSensor.getDistance();
-  Serial.println(fDistance);
+  handleInput();
+   
+   }
+  //currentTime = millis();
+  //Serial.println(fDistance);
   /*if (fDistance < 15 && fDistance != 0) {
     stop();
     }
     /* if(rDistance < 10 && rDistance != 0){
        stop();
        }*/
-  handleInput();
-  printSpeed();
+ // handleInput();
+  //printSpeed();
 
   /*if(beep()){
     prevBeep = currentTime;
@@ -96,6 +98,35 @@ void loop() {
     printDistance();
     printSpeed();
     }*/
+
+
+void autoMode(){
+ 
+   while (true){
+   fSensor.getDistance();
+   setForward();
+   goForward();
+   obstacleAvoidance();
+   stop();
+   delay(500);
+   reverse();
+   rotateOnSpot(90,50);
+   
+   
+}
+}
+
+void obstacleAvoidance(){
+  boolean go = true;
+  while(go){
+    setForward();
+    goForward();
+    fDistance = fSensor.getDistance();
+
+    if(fDistance < 15 && fDistance != 0){
+   go = false;
+    }
+  }
 }
 
 void printSpeed() {
@@ -140,6 +171,7 @@ void printDistance() {
 }
 
 void stop() {
+  fSensor.getDistance();
   car.setSpeed(0);
 }
 
@@ -207,6 +239,9 @@ void handleInput() {
         digitalWrite(redLeft, LOW);
         Serial.println(inChar);
         Serial.println("LED is OFF");
+        break;
+        case 'g':
+        autoMode();
     }
   }
 }
@@ -220,6 +255,7 @@ void speedDown() {
 
 void setForward()
 {
+  gyroscope.update();
   car.setAngle(0);
 
 }
@@ -330,4 +366,34 @@ void stopLights() { // This method turns on stop Lights
     digitalWrite(redLeft, !digitalRead(redLeft));
     redTurnPrev = redTurningCurrent;
   }
+}
+
+void rotateOnSpot(int targetDegrees, int speed) {
+
+  targetDegrees = targetDegrees * 0.87;
+  
+  speed = smartcarlib::utils::getAbsolute(speed);
+  targetDegrees %= 360;
+  if (!targetDegrees) return;
+  
+  if (targetDegrees > 0) { 
+    car.overrideMotorSpeed(speed, -speed); 
+  } else { 
+    car.overrideMotorSpeed(-speed, speed); 
+  }
+  unsigned int initialHeading = car.getHeading(); 
+  int degreesTurnedSoFar = 0; 
+  while (abs(degreesTurnedSoFar) < abs(targetDegrees)) { 
+    gyroscope.update(); 
+    int currentHeading = car.getHeading(); 
+    Serial.println(currentHeading);
+    if ((targetDegrees < 0) && (currentHeading > initialHeading)) { 
+      
+      currentHeading -= 360; 
+    } else if ((targetDegrees > 0) && (currentHeading < initialHeading)) { 
+      currentHeading += 360;
+    }
+    degreesTurnedSoFar = initialHeading - currentHeading; 
+  }
+  stop();
 }
