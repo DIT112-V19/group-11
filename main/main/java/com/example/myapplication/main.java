@@ -1,4 +1,3 @@
-
 package com.example.myapplication;
 
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +11,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -45,6 +46,7 @@ public class main extends Activity {
     Button off_button;
     TextView speed;
     Scanner scanner;
+    Switch go_auto;
 
     joystickClass js;
 
@@ -75,6 +77,7 @@ public class main extends Activity {
         on_button = (Button)findViewById(R.id.on_button);
         off_button = (Button)findViewById(R.id.off_button);
         speed =  findViewById(R.id.speed);
+        go_auto = (Switch) findViewById(R.id.go_auto);
 
         layout_joystick = (RelativeLayout)findViewById(R.id.layout_joystick);
 
@@ -151,7 +154,7 @@ public class main extends Activity {
                     //executorService.scheduleAtFixedRate(new Runnable() {
                       //  @Override
                         //public void run() {
-                            inputStream();
+
 
                         //}
                     //} , 0, 1, TimeUnit.SECONDS);
@@ -163,6 +166,7 @@ public class main extends Activity {
                     textView4.setText("Distance :");
                     textView5.setText("Direction :");
                 }
+
                 return true;
             }
         });
@@ -191,6 +195,31 @@ public class main extends Activity {
                 }
             }
         });
+        go_auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked == true){
+                    command = "g";
+                    try{
+                        outputStream.write(command.getBytes());
+                    }
+                    catch(IOException e){
+                        e.printStackTrace();
+                    }
+                    Toast.makeText(getBaseContext(), "Auto mode on", Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(getBaseContext(),"Auto mode off", Toast.LENGTH_SHORT).show();
+                    command = "l";
+                    try{
+                        outputStream.write(command.getBytes());
+                    }
+                    catch(IOException e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
         bluetooth_connect_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -198,7 +227,9 @@ public class main extends Activity {
                 if(BTinit())
                 {
                     BTconnect();
+
                 }
+              //  inputStream();
 
             }
 
@@ -255,8 +286,7 @@ public class main extends Activity {
     }
 
 
-    public boolean BTconnect()
-    {
+    public boolean BTconnect(){
         boolean connected = true;
 
         try
@@ -300,15 +330,19 @@ public class main extends Activity {
     reader = new byte[1024];
 
 
+
+
         try {
+        inputStream.read(reader);
+        String stringbytes = new String(reader);
 
 
-inputStream.read(reader);
-String stringbytes = new String(reader);
-           // System.out.println(stringbytes);
-            stringbytes = stringbytes.substring(0, 4);
+        //stringbytes = stringbytes.substring(1, 3);
 
-speed.setText(stringbytes);
+
+
+
+        speed.setText(stringbytes);
 
         } catch (IOException x) {
             speed.setText("didnt work");
@@ -350,6 +384,5 @@ scanner method
     }
 
 }
-
 
 
