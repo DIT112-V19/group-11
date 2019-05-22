@@ -55,6 +55,7 @@ unsigned long lastPeriodStart;
 const int beepOnDuration = 150;
 const int beepPeriodDuration = 200;
 
+char inChar = '1';
 
 void setup() {
   Serial.begin(9600);
@@ -83,9 +84,12 @@ unsigned long currentTime = 0;
 int a = 0;
 void loop() {
   handleInput();
+  
+  
+  
 
-}
-//currentTime = millis();
+
+currentTime = millis();
 //Serial.println(fDistance);
 /*if (fDistance < 15 && fDistance != 0) {
   stop();
@@ -96,29 +100,32 @@ void loop() {
 // handleInput();
 //printSpeed();
 
-/*if(beep()){
+if(beep()){
   prevBeep = currentTime;
-  }
+  }/*
   if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
   distancePrintToggle = currentTime;
   printDistance();
   printSpeed();
   }*/
-
+}
 
 void autoMode() {
-
+  inChar = Serial.read();
   while (true) {
     fSensor.getDistance();
-    setForward();
-    goForward();
+    inChar = Serial.read();
+    if (inChar == 'l'){
+      stop();
+      }
+    //setForward();
+   // goForward();
     obstacleAvoidance();
     stop();
     delay(500);
     reverse();
     rotateOnSpot(90, 50);
-
-
+    
   }
 }
 
@@ -132,6 +139,9 @@ void obstacleAvoidance() {
     if (fDistance < 15 && fDistance != 0) {
       go = false;
     }
+    if(inChar == 'l'){
+      break;
+      }
   }
 }
 
@@ -150,6 +160,8 @@ boolean intervalCheck(unsigned long interval, unsigned long toggle) { // handles
 }
 
 boolean beep() {
+  rDistance = rSensor.getDistance();
+  Serial.println(rDistance);
   if (rDistance <= 50 && rDistance != 0) {
     beepInterval = rDistance * 20;
 
@@ -191,7 +203,7 @@ void reverse() {
 
 void handleInput() {
   while (Serial.available() > 0) {
-    char inChar = Serial.read();
+    inChar = Serial.read();
     switch (inChar) {
       case 'w': // forward
         setForward();
@@ -248,6 +260,7 @@ void handleInput() {
         break;
       case 'g':
         autoMode();
+        break;
     }
   }
 }
