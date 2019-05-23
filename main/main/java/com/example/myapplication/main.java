@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -150,14 +151,7 @@ public class main extends Activity {
                     {
                         e.printStackTrace();
                     }
-                   // final ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-                    //executorService.scheduleAtFixedRate(new Runnable() {
-                      //  @Override
-                        //public void run() {
 
-
-                        //}
-                    //} , 0, 1, TimeUnit.SECONDS);
 
                 }else if(arg1.getAction() == MotionEvent.ACTION_UP) {
                     textView1.setText("X :");
@@ -229,12 +223,36 @@ public class main extends Activity {
                     BTconnect();
 
                 }
-              //  inputStream();
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        while (true) {
+                            byte[] buffer = new byte[256];
+                            int bytes;
+                            String readMessage;
+
+                            try {
+                                if (inputStream.available() != 0) {
+                                    bytes = inputStream.read(buffer);
+                                    readMessage = new String(buffer, 0, bytes);
+                                    handleInput(readMessage);
+                                }
+                            } catch (IOException exc) {
+                                Log.e("IOException: ", exc.getMessage());
+                            }
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException ie) {
+                                // do nothing
+                            }
+                            continue;
+                        }
+                    }
+                }).start();
 
             }
 
         });
-        //inputStream();
     }
 
     //Initializes bluetooth module
@@ -308,11 +326,10 @@ public class main extends Activity {
         {
             try
             {
-             //   speed.setText("connected");
+
                 System.out.println("success");
                 inputStream = socket.getInputStream();
-                outputStream = socket.getOutputStream(); //gets the output stream of the socket
-               // inputStream = socket.getInputStream();
+                outputStream = socket.getOutputStream();
 
             }
             catch(IOException e)
@@ -324,57 +341,11 @@ public class main extends Activity {
         return connected;
     }
 
+    private void handleInput(String input) {
+        speed.setText(input);
 
-
-    private void inputStream() {
-    reader = new byte[1024];
-
-
-
-
-        try {
-        inputStream.read(reader);
-        String stringbytes = new String(reader);
-
-
-        //stringbytes = stringbytes.substring(1, 3);
-
-
-
-
-        speed.setText(stringbytes);
-
-        } catch (IOException x) {
-            speed.setText("didnt work");
-        }
-        catch (NullPointerException x){
-            speed.setText("failll");
-        }
     }
 
-
-
-
-/*
-scanner method
-        scanner = new Scanner(inputStream);
-
-        try {
-            scanner = new Scanner(inputStream);
-                    if (scanner.hasNext()) {
-                        speed.setText(scanner.next() + " ... speed");
-
-                    }
-                    else  {
-                        speed.setText("failed");
-                    }
-
-    } catch (NullPointerException e){
-           speed.setText("extra fail");
-
-        }
-
-    }*/
 
 
     @Override
@@ -384,5 +355,4 @@ scanner method
     }
 
 }
-
 
