@@ -71,43 +71,36 @@ void setup() {
   pinMode(redRight, OUTPUT);
   pinMode(yellowLeft, OUTPUT);
   pinMode(redLeft, OUTPUT);
-
-
 }
 
 int fDistance = 0;
 int rDistance = 0;
-const unsigned long DISTANCE_PRINT_INTERVAL = 1000; // one second
+const unsigned long DISTANCE_PRINT_INTERVAL = 500; // one second
 unsigned long distancePrintToggle = 0;
-
 unsigned long currentTime = 0;
-int a = 0;
+
 void loop() {
+  
   handleInput();
   
-  
-  
+  currentTime = millis();
 
+  if(beep()){
+    prevBeep = currentTime;
+  }
+  
+  if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
+    distancePrintToggle = currentTime;
+    //printDistance();
+    printSpeed();
+  }
 
-currentTime = millis();
-//Serial.println(fDistance);
 /*if (fDistance < 15 && fDistance != 0) {
   stop();
   }
   /* if(rDistance < 10 && rDistance != 0){
      stop();
      }*/
-// handleInput();
-//printSpeed();
-
-if(beep()){
-  prevBeep = currentTime;
-  }/*
-  if(intervalCheck(DISTANCE_PRINT_INTERVAL, distancePrintToggle)){
-  distancePrintToggle = currentTime;
-  printDistance();
-  printSpeed();
-  }*/
 }
 
 void autoMode() {
@@ -146,9 +139,9 @@ void obstacleAvoidance() {
 }
 
 void printSpeed() {
-  Serial.print(car.getSpeed());
   rightOdometer.update();
   leftOdometer.update();
+  Serial.println(car.getSpeed(), 1);
 }
 
 boolean intervalCheck(unsigned long interval, unsigned long toggle) { // handles interval checking for a given interval and the respective toggle
@@ -161,7 +154,6 @@ boolean intervalCheck(unsigned long interval, unsigned long toggle) { // handles
 
 boolean beep() {
   rDistance = rSensor.getDistance();
-  Serial.println(rDistance);
   if (rDistance <= 50 && rDistance != 0) {
     beepInterval = rDistance * 20;
 
