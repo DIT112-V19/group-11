@@ -342,7 +342,11 @@ public class main extends Activity {
     }
 
     private void handleInput(String input) {
-        speed.setText(input);
+        double realSpeed = Double.parseDouble(input);
+        realSpeed = realSpeed*10;
+        int intspeed = (int)realSpeed;
+
+        speed.setText(""+ intspeed);
 
     }
 
