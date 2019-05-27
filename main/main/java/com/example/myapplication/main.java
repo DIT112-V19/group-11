@@ -68,6 +68,7 @@ public class main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
+         final TextView reading = (TextView) findViewById(R.id.reading);
         SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
         seekBar.setMax(5);
         textView1 = (TextView)findViewById(R.id.textView1);
