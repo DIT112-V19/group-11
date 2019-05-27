@@ -68,7 +68,8 @@ public class main extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
 
-
+        SeekBar seekBar = (SeekBar) findViewById(R.id.seekBar);
+        seekBar.setMax(5);
         textView1 = (TextView)findViewById(R.id.textView1);
         textView2 = (TextView)findViewById(R.id.textView2);
         textView3 = (TextView)findViewById(R.id.textView3);
@@ -168,7 +169,7 @@ public class main extends Activity {
         on_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                command = "5";
+                command = "7";
                 try {
                     outputStream.write(command.getBytes());
                 }
@@ -189,6 +190,51 @@ public class main extends Activity {
                 }
             }
         });
+        
+         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                reading.setText(progress + "% ");
+
+
+                switch (progress){
+                    case 1:
+                        command = "1";
+                        break;
+                    case 2:
+                        command = "2";
+                        break;
+                    case 3:
+                        command = "3";
+                        break;
+                    case 4:
+                        command = "4";
+                        break;
+                    case 5:
+                        command = "5";
+                        break;
+                }
+
+                try {
+                    outputStream.write(command.getBytes());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+        
         go_auto.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
