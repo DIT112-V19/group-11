@@ -57,6 +57,7 @@ const int beepPeriodDuration = 200;
 
 char inChar = '1';
 
+
 void setup() {
   Serial.begin(9600);
   Serial.setTimeout(100);
@@ -126,7 +127,7 @@ void obstacleAvoidance() {
   boolean go = true;
   while (go) {
     setForward();
-    goForward();
+    goForward(60);
     fDistance = fSensor.getDistance();
 
     if (fDistance < 15 && fDistance != 0) {
@@ -185,8 +186,8 @@ void stop() {
   car.setSpeed(0);
 }
 
-void goForward() {
-  car.setSpeed(70);
+void goForward(int speed) {
+  car.setSpeed(speed);
 }
 
 void reverse() {
@@ -199,7 +200,7 @@ void handleInput() {
     switch (inChar) {
       case 'w': // forward
         setForward();
-        goForward();
+        goForward(60);
         drivingLights();
         break;
       case 's': // reverse
@@ -234,7 +235,7 @@ void handleInput() {
         setReverseRight();
         backingLights();
         break;
-      case '5':
+      case '7':
         digitalWrite(yellowRight, HIGH);
         digitalWrite(redRight, HIGH);
         digitalWrite(yellowLeft, HIGH);
@@ -253,6 +254,23 @@ void handleInput() {
       case 'g':
         autoMode();
         break;
+      case '1':
+        stop();
+        break;
+      case '2':
+        goForward(20);
+        break;
+      case '3':
+        goForward(40);
+        break;
+      case '4':
+        goForward(60);
+        break;
+      case '5':
+        goForward(80);
+        break;
+        
+        
     }
   }
 }
