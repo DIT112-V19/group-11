@@ -21,3 +21,42 @@ To be able to test the project you need to download the bluetooth app from googl
 
 ### Flowchart for bluetooth controler
 ![flow](https://user-images.githubusercontent.com/45367329/58162132-db193b00-7c81-11e9-9a7d-6f103c452f7d.png)
+
+
+
+__________________________________________________________________________________________________________________________________________
+
+## Demo Video and Final ReadMe
+
+
+## Demonstration Video
+
+https://www.youtube.com/watch?v=33cHNJ9j7Kc&feature=youtu.be
+
+
+## What is the Purpose of our Project?
+
+The purpose of our project is to deliver a high-quality RC car that can be enjoyed by all ages. In order to reach this goal, we tackled a few issues:
+
+1. Responsive and Interactive Controls
+
+We really felt that responsive controls can make or break a RC car since RC cars are designed around being controllable and it should be fun to drive! To address this properly, we felt a joystick was the way to go as joysticks are familiar and intuitive to use.
+
+
+2. Parking Assistance / Collision Avoidance
+
+If you're controlling the RC car from a considerable distance, it can be hard to see how close you are to certain objects or walls. To remedy this, we added a buzzer that buzzes with varying frequency depending on close you are to said object. This allows the driver to know how close they are to collision. This permits safe parking or just avoiding collision when reversing.
+
+
+3. Easily Accessible Controller
+
+Most RC cars come with a bulky controller that you have to lug around everywhere you go if you want to be able to control the car. We wanted to avoid this to make it easier on the user so we decided to develop an android app that pairs to the car via Bluetooth and acts as a controller. 
+
+
+4. Automatic mode
+
+Automatic mode, which can be toggled on via the app, is a mode where the car drives by itself and avoids collision using it's front and back sensors. It's a good way to showcase the car's abilities and test if it's sensors are functioning well. 
+
+
+
+## Hardware Setup and configuration
