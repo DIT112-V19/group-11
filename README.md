@@ -69,6 +69,11 @@ RC cars are quick and sometimes it's hard to see where they're going, this can l
 ## Hardware Setup and configuration
 
 
+
+# Sensors
+
+We have two sensors on the car, the front sensor and the rear sensor. The sensors are hooked up to the RC car and the pins they are located on are declared in the Arduino code so the car knows where to get their information from. The front sensor is used in Automatic mode, to avoid collision when the car is self-driving. The rear sensor is used for parking assistance as it's readings are needed for the buzzer's audio cues.
+
 # Bluetooth
 
 We needed to communicate between the Arduino and mobile device so we could send commands and also information, to do this we used a Bluetooth module that we inserted onto the car and can be used with the Arduino to send and receive information. 
@@ -96,3 +101,5 @@ For parking assistance, we wanted an audio cue of how close you were to an objec
 # LED Lights
 We wanted visual clarity for the user and bystanders to see and understand where the car is intending to move. To acheive this goal, we added LED lights to the car. We declared the location of the pins in Arduino so the Arduino code know where to send the commands for the LEDS. The LED lights then turn on based on which direction is inputted into the joystick. For example, if the car is turning left, the mobile app reads that commands, sends it to the Arduino which then turns the car left and also turns on the left LED lights.
 
+
+## Hardware Communication
