@@ -66,17 +66,29 @@ Automatic mode, which can be toggled on via the app, is a mode where the car dri
 ## Hardware Setup and configuration
 
 
+# Bluetooth
+
+We needed to communicate between the Arduino and mobile device so we could send commands and also information, to do this we used a Bluetooth module that we inserted onto the car and can be used with the Arduino to send and receive information. 
+
+We open a Bluetooth connection in the mobile application when the user clicks the "connect" button. The Bluetooth connection consists of two parts, an "Output stream" which allows the mobile app to send information to the car and a "InputStream" which allows the mobile app to display data from the car. When the connection is successful it means it has found the RC car and they are able to communicate. 
+
+
 # Arduino
 We used Arduino as it was provided to us already and it's a intuitive and effective software that allows for easily programmable control of the RC car.
+
+For the Arduino to communicate with the mobile application, it uses the Inputstream part of the Bluetooth connection to send data such as speed or bearing. In the Arduino code, to send information you use "Serial.write" and then whatever information you want to be sent over. The Android code for the mobile application then takes that information and writes into an array and then it can be read from there.
 
 
 # Mobile Application 
 To develop the app that allowed remote control of the RC car, we used Android Studio as we were already familar with Java and most devices run on Android software, allowing us to reach a majority of customers. 
 
 
-To communicate between the Arduino and mobile device, we used a Bluetooth module that we inserted onto the car. We open a Bluetooth connection in the application when the user clicks the "connect" button. The Bluetooth connection consists of two parts, an "Output stream" which allows the mobile app to send information to the car and a "InputStream" which allows the mobile app to display data from the car. When the connection is successful it means it has found the RC car and they are able to communicate. 
-
 The mobile application sends a signal of individual characters that the Arduino listens for and then reacts accordingly depending on what we told it to do in the case of that letter. For example, when you press forward on the joystick on your mobile phone, the character 'w' is sent to the Arduino code on the RC car, which then sets the car straight and sets the speed accordingly. 
 
-For the Arduino to communicate with the mobile application, it uses the Inputstream part of the Bluetooth connection to send data such as speed or bearing. In the Arduino code, to send information you use "Serial.write" and then whatever information you want to be sent over. The Android code for the mobile application then takes that information and writes into an array and then it can be read from there.
+
+# Buzzer
+For parking assistance, we wanted an audio cue of how close you were to an object so you can avoid collision. The buzzer gave us this solution. We hooked the buzzer up to our RC car and in the Arduino we wrote the logic of depending on how close you are to an object based on the readings of the rear sensor, the buzzing increases.
+
+
+# LED Lights
 
