@@ -33,12 +33,12 @@ ________________________________________________________________________________
 
 
 
-## Demonstration Video
+# Demonstration Video
 
 https://www.youtube.com/watch?v=33cHNJ9j7Kc&feature=youtu.be
 
 
-## What is the Purpose of our Project?
+# What is the Purpose of our Project?
 
 The purpose of our project is to deliver a high-quality RC car that can be enjoyed by all ages. In order to reach this goal, we tackled a few issues:
 
@@ -76,5 +76,7 @@ To develop the app that allowed remote control of the RC car, we used Android St
 
 To communicate between the Arduino and mobile device, we used a Bluetooth module that we inserted onto the car. We open a Bluetooth connection in the application when the user clicks the "connect" button. The Bluetooth connection consists of two parts, an "Output stream" which allows the mobile app to send information to the car and a "InputStream" which allows the mobile app to display data from the car. When the connection is successful it means it has found the RC car and they are able to communicate. 
 
-The application sends a signal of individual characters that the Arduino listens for and then reacts accordingly depending on what we told it to do in the case of that letter. For example, when you press forward on the joystick on your mobile phone, the character 'w' is sent to the Arduino code on the RC car, which then sets the car straight and sets the speed accordingly. 
+The mobile application sends a signal of individual characters that the Arduino listens for and then reacts accordingly depending on what we told it to do in the case of that letter. For example, when you press forward on the joystick on your mobile phone, the character 'w' is sent to the Arduino code on the RC car, which then sets the car straight and sets the speed accordingly. 
+
+For the Arduino to communicate with the mobile application, it uses the Inputstream part of the Bluetooth connection to send data such as speed or bearing. In the Arduino code, to send information you use "Serial.write" and then whatever information you want to be sent over. The Android code for the mobile application then takes that information and writes into an array and then it can be read from there.
 
