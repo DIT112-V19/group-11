@@ -103,3 +103,4 @@ We wanted visual clarity for the user and bystanders to see and understand where
 
 
 ## Hardware Communication
+The hardware such as the sensors, buzzer, and LED lights all mainly interact with the Arduino. The pins on which these hardware objects are located on is declared in the Arduino code so that Arduino knows where they are to send and receive information from them. The Arduino can then send this information to the mobile application as neccessary, or to send commands from the mobile application to the hardware. The Arduino acts as a sort of middle man between the two. 
