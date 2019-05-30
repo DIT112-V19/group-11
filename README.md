@@ -26,7 +26,11 @@ To be able to test the project you need to download the bluetooth app from googl
 
 __________________________________________________________________________________________________________________________________________
 
-## Demo Video and Final ReadMe
+## Final ReadMe
+
+
+
+
 
 
 ## Demonstration Video
@@ -60,3 +64,17 @@ Automatic mode, which can be toggled on via the app, is a mode where the car dri
 
 
 ## Hardware Setup and configuration
+
+
+# Arduino
+We used Arduino as it was provided to us already and it's a intuitive and effective software that allows for easily programmable control of the RC car.
+
+
+# Mobile Application 
+To develop the app that allowed remote control of the RC car, we used Android Studio as we were already familar with Java and most devices run on Android software, allowing us to reach a majority of customers. 
+
+
+To communicate between the Arduino and mobile device, we used a Bluetooth module that we inserted onto the car. We open a Bluetooth connection in the application when the user clicks the "connect" button. The Bluetooth connection consists of two parts, an "Output stream" which allows the mobile app to send information to the car and a "InputStream" which allows the mobile app to display data from the car. When the connection is successful it means it has found the RC car and they are able to communicate. 
+
+The application sends a signal of individual characters that the Arduino listens for and then reacts accordingly depending on what we told it to do in the case of that letter. For example, when you press forward on the joystick on your mobile phone, the character 'w' is sent to the Arduino code on the RC car, which then sets the car straight and sets the speed accordingly. 
+
