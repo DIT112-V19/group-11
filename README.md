@@ -24,9 +24,9 @@ To be able to test the project you need to download the bluetooth app from googl
 
 
 
-__________________________________________________________________________________________________________________________________________
+________________________________________________________________________________________________________________________________________
 
-## Final ReadMe
+### Final ReadMe
 
 
 
@@ -62,6 +62,9 @@ Most RC cars come with a bulky controller that you have to lug around everywhere
 Automatic mode, which can be toggled on via the app, is a mode where the car drives by itself and avoids collision using it's front and back sensors. It's a good way to showcase the car's abilities and test if it's sensors are functioning well. 
 
 
+5. Communication of Intent
+
+RC cars are quick and sometimes it's hard to see where they're going, this can lead to collision and other unfortune accidents that can be expensive or painful. To remedy this, we decided to add LED lights that act like a car's rearlights that switch on when a car is turning in a particular direction. This helps to communicate where the RC car is headed and can be used by bystanders to avoid collision with the RC car or remove objects that could be in it's path.
 
 ## Hardware Setup and configuration
 
@@ -91,4 +94,5 @@ For parking assistance, we wanted an audio cue of how close you were to an objec
 
 
 # LED Lights
+We wanted visual clarity for the user and bystanders to see and understand where the car is intending to move. To acheive this goal, we added LED lights to the car. We declared the location of the pins in Arduino so the Arduino code know where to send the commands for the LEDS. The LED lights then turn on based on which direction is inputted into the joystick. For example, if the car is turning left, the mobile app reads that commands, sends it to the Arduino which then turns the car left and also turns on the left LED lights.
 
