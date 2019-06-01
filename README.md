@@ -21,3 +21,86 @@ To be able to test the project you need to download the bluetooth app from googl
 
 ### Flowchart for bluetooth controler
 ![flow](https://user-images.githubusercontent.com/45367329/58162132-db193b00-7c81-11e9-9a7d-6f103c452f7d.png)
+
+
+
+________________________________________________________________________________________________________________________________________
+
+### Final ReadMe
+
+
+
+
+
+
+# Demonstration Video
+
+https://www.youtube.com/watch?v=33cHNJ9j7Kc&feature=youtu.be
+
+
+# What is the Purpose of our Project?
+
+The purpose of our project is to deliver a high-quality RC car that can be enjoyed by all ages. In order to reach this goal, we tackled a few issues:
+
+1. Responsive and Interactive Controls
+
+We really felt that responsive controls can make or break a RC car since RC cars are designed around being controllable and it should be fun to drive! To address this properly, we felt a joystick was the way to go as joysticks are familiar and intuitive to use.
+
+
+2. Parking Assistance / Collision Avoidance
+
+If you're controlling the RC car from a considerable distance, it can be hard to see how close you are to certain objects or walls. To remedy this, we added a buzzer that buzzes with varying frequency depending on close you are to said object. This allows the driver to know how close they are to collision. This permits safe parking or just avoiding collision when reversing.
+
+
+3. Easily Accessible Controller
+
+Most RC cars come with a bulky controller that you have to lug around everywhere you go if you want to be able to control the car. We wanted to avoid this to make it easier on the user so we decided to develop an android app that pairs to the car via Bluetooth and acts as a controller. 
+
+
+4. Automatic mode
+
+Automatic mode, which can be toggled on via the app, is a mode where the car drives by itself and avoids collision using it's front and back sensors. It's a good way to showcase the car's abilities and test if it's sensors are functioning well. 
+
+
+5. Communication of Intent
+
+RC cars are quick and sometimes it's hard to see where they're going, this can lead to collision and other unfortune accidents that can be expensive or painful. To remedy this, we decided to add LED lights that act like a car's rearlights that switch on when a car is turning in a particular direction. This helps to communicate where the RC car is headed and can be used by bystanders to avoid collision with the RC car or remove objects that could be in it's path.
+
+## Hardware Setup and configuration
+
+
+
+# Sensors
+
+We have two sensors on the car, the front sensor and the rear sensor. The sensors are hooked up to the RC car and the pins they are located on are declared in the Arduino code so the car knows where to get their information from. The front sensor is used in Automatic mode, to avoid collision when the car is self-driving. The rear sensor is used for parking assistance as it's readings are needed for the buzzer's audio cues.
+
+# Bluetooth
+
+We needed to communicate between the Arduino and mobile device so we could send commands and also information, to do this we used a Bluetooth module that we inserted onto the car and can be used with the Arduino to send and receive information. 
+
+We open a Bluetooth connection in the mobile application when the user clicks the "connect" button. The Bluetooth connection consists of two parts, an "Output stream" which allows the mobile app to send information to the car and a "InputStream" which allows the mobile app to display data from the car. When the connection is successful it means it has found the RC car and they are able to communicate. 
+
+
+# Arduino
+We used Arduino as it was provided to us already and it's a intuitive and effective software that allows for easily programmable control of the RC car.
+
+For the Arduino to communicate with the mobile application, it uses the Inputstream part of the Bluetooth connection to send data such as speed or bearing. In the Arduino code, to send information you use "Serial.write" and then whatever information you want to be sent over. The Android code for the mobile application then takes that information and writes into an array and then it can be read from there.
+
+
+# Mobile Application 
+To develop the app that allowed remote control of the RC car, we used Android Studio as we were already familar with Java and most devices run on Android software, allowing us to reach a majority of customers. 
+
+
+The mobile application sends a signal of individual characters that the Arduino listens for and then reacts accordingly depending on what we told it to do in the case of that letter. For example, when you press forward on the joystick on your mobile phone, the character 'w' is sent to the Arduino code on the RC car, which then sets the car straight and sets the speed accordingly. 
+
+
+# Buzzer
+For parking assistance, we wanted an audio cue of how close you were to an object so you can avoid collision. The buzzer gave us this solution. We hooked the buzzer up to our RC car and in the Arduino we wrote the logic of depending on how close you are to an object based on the readings of the rear sensor, the buzzing increases.
+
+
+# LED Lights
+We wanted visual clarity for the user and bystanders to see and understand where the car is intending to move. To acheive this goal, we added LED lights to the car. We declared the location of the pins in Arduino so the Arduino code know where to send the commands for the LEDS. The LED lights then turn on based on which direction is inputted into the joystick. For example, if the car is turning left, the mobile app reads that commands, sends it to the Arduino which then turns the car left and also turns on the left LED lights.
+
+
+## Hardware Communication
+The hardware such as the sensors, buzzer, and LED lights all mainly interact with the Arduino. The pins on which these hardware objects are located on is declared in the Arduino code so that Arduino knows where they are to send and receive information from them. The Arduino can then send this information to the mobile application as neccessary, or to send commands from the mobile application to the hardware. The Arduino acts as a sort of middle man between the two. 
